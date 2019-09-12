@@ -11,13 +11,13 @@ exports.createPages = ({ actions, graphql }) => {
         edges {
           node {
             id
-            move
-            videoUrl
-            thumbnail
-            title
+            name
+            logoURL
+            description
+            address
+            phone
+            website
             tags
-            level
-            instructor
           }
         }
       }
@@ -30,19 +30,19 @@ exports.createPages = ({ actions, graphql }) => {
 
     const items = result.data.allItem.edges
 
-    items.forEach(edge => {
-      const id = edge.node.id
-      const title = edge.node.title
-      const videoPath = `/video/${_.kebabCase(title)}/`
+    // items.forEach(edge => {
+    //   const id = edge.node.id
+    //   const name = edge.node.name
+    //   const businessPath = `/business/${_.kebabCase(name)}/`
 
-      createPage({
-        path: videoPath,
-        component: path.resolve(`src/templates/single-item.js`),
-        context: {
-          itemId: id,
-        },
-      })
-    })
+    //   createPage({
+    //     path: businessPath,
+    //     component: path.resolve(`src/templates/single-item.js`),
+    //     context: {
+    //       itemId: id,
+    //     },
+    //   })
+    // })
 
     // Tag pages:
     let tags = []
@@ -66,28 +66,6 @@ exports.createPages = ({ actions, graphql }) => {
         },
       })
     })
-
-    let instructors = []
-
-    items.forEach(item => {
-      if (item.node.instructor.length > -1) {
-        instructors = instructors.concat(item.node.instructor)
-      }
-    })
-
-    instructors = _.uniq(instructors)
-
-    instructors.forEach(instructor => {
-      const instructorPath = `/instructor/${_.kebabCase(instructor)}/`
-
-      createPage({
-        path: instructorPath,
-        component: path.resolve(`src/templates/single-instructor.js`),
-        context: {
-          instructor,
-        },
-      })
-    })
   })
 }
 
@@ -100,7 +78,7 @@ exports.sourceNodes = async ({
 
   const fetchFormItems = () =>
     axios.get(
-      `https://sheets.googleapis.com/v4/spreadsheets/1Qyn6530gveP7wnLHswBH0a_6ndTbWE65hvMWY17313Y/values:batchGet?ranges=export&majorDimension=ROWS&key=AIzaSyC1XWLfbg_9cbaq6dw-eFROFVDpfp2XhxE`
+      `https://sheets.googleapis.com/v4/spreadsheets/1F7awh105dzhsj2XlrGW-SE4DxmXItbYLgISycjI0yd8/values:batchGet?majorDimension=ROWS&ranges=H1%3AH2&key=AIzaSyA0KQcX1bnbsOiR5eG6za-og3ulqesx-QI`
     )
 
   const response = await fetchFormItems()
@@ -131,14 +109,13 @@ exports.sourceNodes = async ({
         contentDigest: createContentDigest(item),
       },
       children: [],
-      move: item.move,
-      videoUrl: item.videoUrl,
-      thumbnail: item.thumbnail,
-      title: item.title,
+      name: item.name,
+      logoURL: item.logoURL,
+      description: item.description,
+      address: item.address,
+      phone: item.phone,
+      website: item.website,
       tags: item.tags,
-      level: item.level,
-      instructor: item.instructor,
-      instructor_image: item.instructor_image,
     }
 
     createNode(itemNode)
